@@ -1,0 +1,42 @@
+body {
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin: 0;
+    padding: 0;
+    background: rgb(214, 214, 214);
+    font-family: 'Poppins', sans-serif;
+}
+
+h1 {
+    margin: 0;
+    padding: 0;
+}
+
+#sbs_icon {
+    max-width: 300px;
+}
+
+.success_modal {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: white;    
+    padding: 1em;
+    border-radius: 20px;
+    margin: 1em;
+}
+
+.close_window_button {
+    background: #63C4AB;
+    border: none;
+    padding: 1em 2em;
+    border-radius: 10px;
+    font-weight: bold;
+}
+
+
