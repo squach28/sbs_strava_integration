@@ -45,7 +45,6 @@ const getActivitiesByDiscordId = async (req, res) => {
             }
         })
     }
-
     res.send(data)
 }
 
