@@ -20,9 +20,13 @@ const UserStats = new mongoose.Schema({
 })
 
 const LeaderboardSchema = new mongoose.Schema({
-    type: {
+    month: {
         type: String,
         require: true
+    },
+    year: {
+        type: String,
+        required: true
     },
     users: {
         type: [UserStats],
