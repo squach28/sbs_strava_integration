@@ -1,12 +1,31 @@
 const mongoose = require('mongoose')
 
+const UserStats = new mongoose.Schema({
+    discordId: {
+        type: String,
+        required: true
+    },
+    stravaId: {
+        type: String,
+        required: true 
+    },
+    numOfActivities: {
+        type: Number,
+        required: true 
+    },
+    distance: {
+        type: Number,
+        required: true 
+    }
+})
+
 const LeaderboardSchema = new mongoose.Schema({
     type: {
         type: String,
         require: true
     },
     users: {
-        type: Array,
+        type: [UserStats],
         require: true
     }
 })
