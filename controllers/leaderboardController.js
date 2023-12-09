@@ -20,15 +20,15 @@ const monthMapping = {
 const validYears = ['2023', '2024']
 
 const getLeaderboard = async (req, res) => {
-    const timeframe = req.query.timeframe
-    const timeframeYear = req.query.timeframe_year
+    const monthOrYear = req.query.month_or_year
+    const year = req.query.year
     let leaderboard
     
     try {
-        if(timeframe && timeframeYear) {
-            leaderboard = await getMonthlyLeaderboard(timeframe, timeframeYear)
-        } else if(timeframe) {
-            leaderboard = await getYearlyLeaderboard(timeframe)
+        if(monthOrYear && year) {
+            leaderboard = await getMonthlyLeaderboard(monthOrYear, year)
+        } else if(monthOrYear) {
+            leaderboard = await getYearlyLeaderboard(monthOrYear)
         } else {
             leaderboard = await getMonthlyLeaderboard()
         }
