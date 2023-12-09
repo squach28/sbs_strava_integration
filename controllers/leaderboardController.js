@@ -25,41 +25,44 @@ const getLeaderboard = async (req, res) => {
     let leaderboard
     
     try {
-        if(timeframe) {
-            console.log('year')
-            leaderboard = await getYearlyLeaderboard(timeframe)
-        }else if(timeframe && timeframeYear) {
-            console.log('month with params')
+        if(timeframe && timeframeYear) {
             leaderboard = await getMonthlyLeaderboard(timeframe, timeframeYear)
+        } else if(timeframe) {
+            leaderboard = await getYearlyLeaderboard(timeframe)
         } else {
-            console.log('month')
             leaderboard = await getMonthlyLeaderboard()
         }
         res.status(200).json(leaderboard)
     } catch(e) {
         console.log(e)
-        res.status(400).json({ 'message': 'Month is not valid' })
+        res.status(400).json({ 'message': 'Invalid data' })
     }
 
 }
 
 const getMonthlyLeaderboard = async (month = (new Date().getMonth() + 1).toString(), year=(new Date().getFullYear()).toString()) => {
-    if(!(month in monthMapping) && month !== (new Date().getMonth() + 1).toString()) {
-        throw new Error('Month is not valid')
+    if(month in monthMapping) {
+        month = monthMapping[month]
     }
-    console.log(month)
-    const monthLeaderboard = await Leaderboard.findOne({
-       month: month,
-       year: year 
-    })
-    const users = monthLeaderboard.users.sort((a, b) => {
-        if(a.distance > b.distance) {
-            return -1
-        } else {
-            return 1
+    try {
+        const monthLeaderboard = await Leaderboard.findOne({
+            month: month,
+            year: year 
+         })
+         const users = monthLeaderboard.users.sort((a, b) => {
+             if(a.distance > b.distance) {
+                 return -1
+             } else {
+                 return 1
+             }
+         })
+         return users
+    } catch(e) {
+        return {
+            'message': 'invalid data'
         }
-    })
-    return users
+    }
+
 }
 
 const getYearlyLeaderboard = async (year) => {
