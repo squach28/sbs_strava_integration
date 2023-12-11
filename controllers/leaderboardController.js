@@ -100,8 +100,13 @@ const getYearlyLeaderboard = async (year) => {
                 return 1
             }
         })
+
+        const leaderboard = {
+            year: year,
+            users: usersArr
+        }
     
-        return usersArr
+        return leaderboard
     } catch(e) {
         console.log(e)
     }
