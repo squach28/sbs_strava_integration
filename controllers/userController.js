@@ -1,5 +1,11 @@
 const User = require("../models/User")
 const { getAccessToken } = require("../utils/stravaAccessTokenUtil")
+const querystring = require('querystring')
+
+const convertToMiles = (meters) => {
+    const meterToMileConversion = 0.0006213712
+    return Math.round(meters * meterToMileConversion)
+}
 
 // fetches a user from the DB with discord id
 const getUserByDiscordId = async (req, res) => {
@@ -32,7 +38,13 @@ const getActivitiesByDiscordId = async (req, res) => {
     const discordId = req.query.discordId
     const category = req.query.category
     const accessToken = await getAccessToken(discordId)
-    const response = await fetch(`https://www.strava.com/api/v3/athlete/activities`, {
+    const before = req.query.before
+    const after = req.query.after
+    const queryParams = (before && after) ? {
+        before: before,
+        after: after
+    } : null
+    const response = await fetch(`https://www.strava.com/api/v3/athlete/activities${queryParams ? '?' + querystring.stringify(queryParams) : ''}`, {
         headers: {
             Authorization: `Bearer ${accessToken}`
         }
@@ -45,6 +57,10 @@ const getActivitiesByDiscordId = async (req, res) => {
             }
         })
     }
+    data.forEach(activity => {
+        console.log(activity.distance)
+        activity.distance = convertToMiles(activity.distance)
+    })
     res.send(data)
 }
 

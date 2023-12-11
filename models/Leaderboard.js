@@ -1,6 +1,6 @@
 const mongoose = require('mongoose')
 
-const UserStats = new mongoose.Schema({
+const UserStatsSchema = new mongoose.Schema({
     discordId: {
         type: String,
         required: true
@@ -19,6 +19,8 @@ const UserStats = new mongoose.Schema({
     }
 })
 
+
+
 const LeaderboardSchema = new mongoose.Schema({
     month: {
         type: String,
@@ -29,11 +31,13 @@ const LeaderboardSchema = new mongoose.Schema({
         required: true
     },
     users: {
-        type: [UserStats],
+        type: [UserStatsSchema],
         require: true
     }
 })
 
+const UserStats = mongoose.model('UserStats', UserStatsSchema)
 const Leaderboard = mongoose.model('Leaderboard', LeaderboardSchema)
 
-module.exports = Leaderboard
+
+module.exports = { UserStats, Leaderboard }

@@ -1,5 +1,5 @@
 const fetch = require('node-fetch')
-const Leaderboard = require('../models/Leaderboard')
+const { Leaderboard } = require('../models/Leaderboard')
 
 
 const monthMapping = {
@@ -23,7 +23,6 @@ const getLeaderboard = async (req, res) => {
     const monthOrYear = req.query.month_or_year
     const year = req.query.year
     let leaderboard
-    
     try {
         if(monthOrYear && year) {
             leaderboard = await getMonthlyLeaderboard(monthOrYear, year)
@@ -47,8 +46,8 @@ const getMonthlyLeaderboard = async (month = (new Date().getMonth() + 1).toStrin
     try {
         const monthLeaderboard = await Leaderboard.findOne({
             month: month,
-            year: year 
-         })
+            year: year
+        })    
          const users = monthLeaderboard.users.sort((a, b) => {
              if(a.distance > b.distance) {
                  return -1
