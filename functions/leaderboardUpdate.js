@@ -9,7 +9,7 @@ const getUserActivities = async (discordId, before, after) => {
         after: after
     }
     try {
-        const activities = await fetch(`http://localhost:3001/user/activities?${querystring.stringify(queryParams)}`)
+        const activities = await fetch(`${process.env.API_URL}?${querystring.stringify(queryParams)}`)
             .then(res => res.json())
             .then(data => data)
         return activities
@@ -34,7 +34,6 @@ const updateLeaderboard = async (req, res) => {
             month: month,
             year: year
         })
-        // TODO: iterate through each user and calculate the number of activities + total distance
         for(let user of users) {
             const activities = await getUserActivities(user.discordId, before, after)
             const activityInfo = {
