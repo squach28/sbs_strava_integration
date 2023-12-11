@@ -20,7 +20,7 @@ const monthMapping = {
 const validYears = ['2023', '2024']
 
 const getLeaderboard = async (req, res) => {
-    const monthOrYear = req.query.month_or_year
+    const monthOrYear = req.query.monthOrYear
     const year = req.query.year
     let leaderboard
     try {
@@ -48,14 +48,14 @@ const getMonthlyLeaderboard = async (month = (new Date().getMonth() + 1).toStrin
             month: month,
             year: year
         })    
-         const users = monthLeaderboard.users.sort((a, b) => {
+        monthLeaderboard.users.sort((a, b) => {
              if(a.distance > b.distance) {
                  return -1
              } else {
                  return 1
              }
          })
-         return users
+         return monthLeaderboard
     } catch(e) {
         return {
             'message': 'invalid data'
