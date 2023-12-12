@@ -52,7 +52,6 @@ const getStatsByDiscordId = async (req, res) => {
         }
         result.push(resultStat)
     }
-    console.log(result)
     res.send(result)   
 }
 
@@ -81,7 +80,6 @@ const getActivitiesByDiscordId = async (req, res) => {
         })
     }
     data.forEach(activity => {
-        console.log(activity.distance)
         activity.distance = convertToMiles(activity.distance)
     })
     res.send(data)
