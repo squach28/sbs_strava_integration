@@ -18,4 +18,5 @@ router.get('/activities', getActivitiesByDiscordId)
 router.get('/:discordId', getUserByDiscordId)
 
 
+
 module.exports = router

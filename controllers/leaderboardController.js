@@ -20,6 +20,7 @@ const monthMapping = {
 const validYears = ['2023', '2024']
 
 const getLeaderboard = async (req, res) => {
+    console.log(req.origin)
     const monthOrYear = req.query.monthOrYear
     const year = req.query.year
     let leaderboard

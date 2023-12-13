@@ -4,9 +4,12 @@ const mongoose = require('mongoose')
 const authRoutes = require('./routes/authRoutes.js')
 const userRoutes = require('./routes/userRoutes.js')
 const leaderboardRoutes = require('./routes/leaderboardRoutes.js')
+const cors = require('cors')
+const bodyParser = require('body-parser')
 
 const uri = `mongodb+srv://${process.env.MONGO_USERNAME}:${process.env.MONGO_PASSWORD}@cluster0.6dvxunc.mongodb.net/sbs-strava?retryWrites=true&w=majority` // uri to connect to mongo DB
-
+app.use(cors())
+app.use(bodyParser.json())
 app.use('/user', userRoutes)
 app.use('/auth', authRoutes)
 app.use('/leaderboard', leaderboardRoutes)
