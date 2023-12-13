@@ -1,11 +1,11 @@
 const express = require('express')
 const router = express.Router()
-const { getUserByDiscordId, createUser, updateUser } = require('../controllers/userController')
+const { getUserByDiscordId, createUser, updateSessionId } = require('../controllers/userController')
 
 
 router.get('/:discordId', getUserByDiscordId)
 router.post('/createUser', createUser)
-router.put('/updateUser', updateUser)
+router.put('/updateSessionId', updateSessionId)
 
 
 

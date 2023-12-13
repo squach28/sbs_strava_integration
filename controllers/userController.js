@@ -28,10 +28,15 @@ const createUser = async (req, res) => {
     }
 }
 
-const updateUser = async (req, res) => {
-    console.log('update user')
+const updateSessionId = async (req, res) => {
+    const discordId = req.query.discordId
+    const sessionId = req.body
+    console.log(req.body)
     try {
-        res.send('updated user')
+        const updatedUser = await User.findOneAndUpdate({
+            discordId: discordId
+        }, sessionId)
+        res.send(updatedUser)
     } catch(e) {
         console.log(e)
     }
@@ -39,4 +44,4 @@ const updateUser = async (req, res) => {
 
 
 
-module.exports = { getUserByDiscordId, createUser, updateUser }
+module.exports = { getUserByDiscordId, createUser, updateSessionId }
