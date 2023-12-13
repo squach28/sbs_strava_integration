@@ -10,6 +10,10 @@ const UserSchema = new mongoose.Schema({
         type: Number,
         unique: true
     },
+    discordName: {
+        type: String,
+        required: true
+    },
     stravaAccessToken: String,
     stravaRefreshToken: String,
     stravaTokenExpiresAt: Number,
