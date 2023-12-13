@@ -5,6 +5,10 @@ const UserStatsSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    discordName: {
+        type: String,
+        required: true
+    },
     stravaId: {
         type: String,
         required: true 

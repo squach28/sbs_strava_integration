@@ -20,7 +20,6 @@ const monthMapping = {
 const validYears = ['2023', '2024']
 
 const getLeaderboard = async (req, res) => {
-    console.log(req.origin)
     const monthOrYear = req.query.monthOrYear
     const year = req.query.year
     let leaderboard
@@ -60,8 +59,8 @@ const getMonthlyLeaderboard = async (month = (new Date().getMonth() + 1).toStrin
         for(let user of monthLeaderboard.users) {
             const discordUser = await User.findOne({ discordId: user.discordId })
             user.avatarUrl = discordUser.avatarUrl
+            user.discordName = discordUser.discordName
         }
-         console.log(monthLeaderboard.users)
          return monthLeaderboard
     } catch(e) {
         return {
