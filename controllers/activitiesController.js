@@ -31,4 +31,4 @@ const getActivitiesByDiscordId = async (req, res) => {
     res.send(data)
 }
 
-module.exports = { getActivitiesByDiscordId}
+module.exports = { getActivitiesByDiscordId }

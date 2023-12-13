@@ -16,6 +16,27 @@ const getUserByDiscordId = async (req, res) => {
     }
 }
 
+const createUser = async (req, res) => {
+    const body = req.body
+    try {
+        const user = new User(body)
+        await user.save()
+        res.status(200).json({ 'message': 'User was created' })
+    } catch(e) {
+        console.log(e)
+        res.status(500).json({ 'message': 'Something went wrong, please try again later.' })
+    }
+}
+
+const updateUser = async (req, res) => {
+    console.log('update user')
+    try {
+        res.send('updated user')
+    } catch(e) {
+        console.log(e)
+    }
+}
 
 
-module.exports = { getUserByDiscordId }
+
+module.exports = { getUserByDiscordId, createUser, updateUser }
