@@ -1,4 +1,4 @@
-const fetch = require('node-fetch')
+const User = require('../models/User')
 const { Leaderboard } = require('../models/Leaderboard')
 
 
@@ -56,6 +56,12 @@ const getMonthlyLeaderboard = async (month = (new Date().getMonth() + 1).toStrin
                  return 1
              }
          })
+
+        for(let user of monthLeaderboard.users) {
+            const discordUser = await User.findOne({ discordId: user.discordId })
+            user.avatarUrl = discordUser.avatarUrl
+        }
+         console.log(monthLeaderboard.users)
          return monthLeaderboard
     } catch(e) {
         return {

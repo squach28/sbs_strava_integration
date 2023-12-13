@@ -16,6 +16,9 @@ const UserStatsSchema = new mongoose.Schema({
     distance: {
         type: Number,
         required: true 
+    },
+    avatarUrl: {
+        type: String
     }
 })
 
