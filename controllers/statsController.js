@@ -1,6 +1,5 @@
-const User = require('../models/User')
 const { getAccessToken } = require("../utils/stravaAccessTokenUtil")
-const querystring = require('querystring')
+const { convertToMiles } = require('../utils/unitsConverter')
 
 // provides stats for the user
 // stats - number of activites and distance by activity and total number of activites and distance

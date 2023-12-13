@@ -1,6 +1,7 @@
 const User = require('../models/User')
 const { getAccessToken } = require("../utils/stravaAccessTokenUtil")
 const querystring = require('querystring')
+const { convertToMiles } = require('../utils/unitsConverter')
 
 const getActivitiesByDiscordId = async (req, res) => {
     const discordId = req.query.discordId
