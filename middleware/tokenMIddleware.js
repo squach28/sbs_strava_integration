@@ -8,4 +8,4 @@ const expiredTokenMiddleware = async (req, res, next) => {
     next()
 }
 
-module.exports = expiredTokenMiddleware
+module.exports = { expiredTokenMiddleware }

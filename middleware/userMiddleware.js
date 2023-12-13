@@ -15,4 +15,4 @@ const userExistsMiddleware = async (req, res, next) => {
     }
 }
 
-module.exports = userExistsMiddleware
+module.exports = { userExistsMiddleware }
