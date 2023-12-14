@@ -12,8 +12,9 @@ const getStatsByDiscordId = async (req, res) => {
             Authorization: `Bearer ${accessToken}`
         }
     })
-    const activities = await response.json()
+    const activities = await response.json() 
     const stats = {}
+    // take each activity and calculate the distance and numOfActivities
     for(let activity of activities) {
         const sportType = activity.sport_type
         const distance = convertToMiles(activity.distance)
@@ -26,7 +27,7 @@ const getStatsByDiscordId = async (req, res) => {
         stats[sportType].numOfActivities += 1
         stats[sportType].distance += distance 
     }
-    const result = []
+    const result = [] // return an array of objects that contain category, distance, and numOfActivities
     for(let stat of Object.entries(stats)) {
         const resultStat = {
             category: stat[0],

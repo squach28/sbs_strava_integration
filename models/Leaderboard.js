@@ -43,7 +43,6 @@ const LeaderboardSchema = new mongoose.Schema({
     }
 })
 
-const UserStats = mongoose.model('UserStats', UserStatsSchema)
 const Leaderboard = mongoose.model('Leaderboard', LeaderboardSchema)
 
 

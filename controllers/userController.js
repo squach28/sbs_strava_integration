@@ -1,6 +1,6 @@
 const User = require("../models/User")
 
-// fetches a user from the DB with discord id
+// fetches a user from the DB by discord id
 const getUserByDiscordId = async (req, res) => {
     const discordId = req.params.discordId
     const user = await User.findOne({ discordId: discordId})
@@ -11,6 +11,7 @@ const getUserByDiscordId = async (req, res) => {
     }
 }
 
+// creates a user based on request body
 const createUser = async (req, res) => {
     const body = req.body
     try {
@@ -23,10 +24,10 @@ const createUser = async (req, res) => {
     }
 }
 
+// update a user's session id by discord id
 const updateSessionId = async (req, res) => {
     const discordId = req.query.discordId
     const sessionId = req.body
-    console.log(req.body)
     try {
         const updatedUser = await User.findOneAndUpdate({
             discordId: discordId

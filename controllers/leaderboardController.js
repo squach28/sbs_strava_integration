@@ -1,7 +1,7 @@
 const User = require('../models/User')
 const { Leaderboard } = require('../models/Leaderboard')
 
-
+// month mapping if user provided a month parameter
 const monthMapping = {
     'jan': '1',
     'feb': '2',
@@ -17,8 +17,7 @@ const monthMapping = {
     'dec': '12'
 }
 
-const validYears = ['2023', '2024']
-
+// gets the leaderboard (month or year) based on user's request
 const getLeaderboard = async (req, res) => {
     const monthOrYear = req.query.monthOrYear
     const year = req.query.year
@@ -39,6 +38,7 @@ const getLeaderboard = async (req, res) => {
 
 }
 
+// gets the monthly leaderboard; defaults to current month if no args provided
 const getMonthlyLeaderboard = async (month = (new Date().getMonth() + 1).toString(), year=(new Date().getFullYear()).toString()) => {
     if(month in monthMapping) {
         month = monthMapping[month]
@@ -70,6 +70,7 @@ const getMonthlyLeaderboard = async (month = (new Date().getMonth() + 1).toStrin
 
 }
 
+// gets the yearly leaderboard
 const getYearlyLeaderboard = async (year) => {
     try {
         const yearLeaderboard = await Leaderboard.find({

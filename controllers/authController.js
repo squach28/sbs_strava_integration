@@ -4,9 +4,8 @@ require('dotenv').config()
 const User = require('../models/User')
 const path = require('path')
 
-// gets a token with info (strava_id, access_token, refresh_token, expires_at) and stores in DB
-// TODO: instead of creating a new user, find the user with the discord id 
-// enforce with the state query parameter to know which user to update
+// gets a tokenn using oauth2 from strava and stores it in the db
+// also takes away sessionId, marking that a user has completed registration
 const exchangeToken = async (req, res) => {
     const code = req.query.code
     const sessionId = req.query.state
