@@ -46,4 +46,4 @@ const LeaderboardSchema = new mongoose.Schema({
 const Leaderboard = mongoose.model('Leaderboard', LeaderboardSchema)
 
 
-module.exports = { UserStats, Leaderboard }
+module.exports = { Leaderboard }
