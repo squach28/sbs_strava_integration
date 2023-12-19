@@ -4,6 +4,7 @@ require('dotenv').config()
 const User = require('../models/User')
 const path = require('path')
 const { Leaderboard, UserStats } = require('../models/Leaderboard')
+const { convertToMiles } = require('../utils/unitsConverter')
 
 
 const addUserActivitesForCurrentMonth = async (discordId, stravaId, accessToken) => {
@@ -38,6 +39,7 @@ const addUserActivitesForCurrentMonth = async (discordId, stravaId, accessToken)
                 stravaId: acc.stravaId
             }
         }, activityInfo)
+        result.distance = convertToMiles(result.distance)
         const userStats = new UserStats(result)
         const update = {
             $push: { users: userStats }
