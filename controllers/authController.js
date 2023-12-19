@@ -10,7 +10,7 @@ const { convertToMiles } = require('../utils/unitsConverter')
 const addUserActivitesForCurrentMonth = async (discordId, stravaId, accessToken) => {
     try {
         const currentDate = new Date()
-        const month = ((currentDate.getMonth() + 1) % 12).toString()
+        const month = ((currentDate.getMonth() % 13) + 1).toString()
         const year = currentDate.getFullYear().toString()
         const before = new Date(currentDate.getMonth() + 1 <= 11 ? currentDate.getFullYear() : currentDate.getFullYear() + 1,( currentDate.getMonth() + 1) % 11, 1).getTime() / 1000
         const after = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1).getTime() / 1000
@@ -87,7 +87,6 @@ const exchangeToken = async (req, res) => {
                 }, {
                     new: true
                 })
-                console.log(user)
                 const discordId = user.discordId
                 const accessToken = user.stravaAccessToken
                 const stravaId = user.stravaId
