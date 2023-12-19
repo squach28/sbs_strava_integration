@@ -42,8 +42,8 @@ const LeaderboardSchema = new mongoose.Schema({
         require: true
     }
 })
-
+const UserStats = mongoose.model('UserStats', UserStatsSchema)
 const Leaderboard = mongoose.model('Leaderboard', LeaderboardSchema)
 
 
-module.exports = { Leaderboard }
+module.exports = { UserStats, Leaderboard }
