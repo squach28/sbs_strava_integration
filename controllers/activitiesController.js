@@ -9,13 +9,16 @@ const getActivities = async (req, res) => {
         const users = await User.find({})
         const allActivities = []
         for(let user of users) {
-            const accessToken = user.stravaAccessToken
+            const accessToken = await getAccessToken(user.discordId)
             const response = await fetch(`https://www.strava.com/api/v3/athlete/activities`, {
                 headers: {
                     Authorization: `Bearer ${accessToken}`
                 }
             })
-            const activities = await response.json()
+            let activities = await response.json()
+            if(activities.message) {
+                activities = []
+            }
             activities.forEach(activity => {
                 allActivities.push({
                     discordName: user.discordName,
