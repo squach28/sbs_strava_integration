@@ -3,6 +3,33 @@ const { getAccessToken } = require("../utils/stravaAccessTokenUtil")
 const querystring = require('querystring')
 const { convertToMiles } = require('../utils/unitsConverter')
 
+const getActivities = async (req, res) => {
+    try {
+        const users = await User.find({})
+        const result = []
+        for(let user of users) {
+            const accessToken = user.stravaAccessToken
+            const response = await fetch(`https://www.strava.com/api/v3/athlete/activities`, {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`
+                }
+            })
+            const activities = await response.json()
+            const userActivities = {
+                discordName: user.discordName,
+                avatarUrl: user.avatarUrl,
+                activities: activities
+            }
+            result.push(userActivities)
+
+        }
+        res.send(result)
+    } catch(e) {
+        console.log(e)
+    }
+    
+}
+
 const getActivitiesByDiscordId = async (req, res) => {
     const discordId = req.query.discordId
     const category = req.query.category
@@ -32,4 +59,4 @@ const getActivitiesByDiscordId = async (req, res) => {
     res.send(data)
 }
 
-module.exports = { getActivitiesByDiscordId }
+module.exports = { getActivities, getActivitiesByDiscordId }
