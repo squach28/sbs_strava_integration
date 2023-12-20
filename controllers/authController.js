@@ -6,7 +6,7 @@ const path = require('path')
 const { Leaderboard, UserStats } = require('../models/Leaderboard')
 const { convertToMiles } = require('../utils/unitsConverter')
 
-
+// adds user's activities into the leaderboard for user who has just signed up
 const addUserActivitesForCurrentMonth = async (discordId, stravaId, accessToken) => {
     try {
         const currentDate = new Date()
