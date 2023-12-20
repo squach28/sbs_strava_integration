@@ -5,6 +5,7 @@ const { convertToMiles } = require('../utils/unitsConverter')
 // stats - number of activites and distance by activity and total number of activites and distance
 const getStatsByDiscordId = async (req, res) => {
     const discordId = req.query.discordId
+    try {
     const accessToken = await getAccessToken(discordId)
     
     const response = await fetch(`https://www.strava.com/api/v3/athlete/activities`, {
@@ -37,6 +38,10 @@ const getStatsByDiscordId = async (req, res) => {
         result.push(resultStat)
     }
     res.send(result)   
+    } catch(e) {
+        console.log(e)
+        res.status(500).json({ message: 'Something went wrong, please try again later.'})
+    }
 }
 
 module.exports = { getStatsByDiscordId }

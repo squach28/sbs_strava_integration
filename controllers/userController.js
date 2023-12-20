@@ -35,6 +35,7 @@ const updateSessionId = async (req, res) => {
         res.send(updatedUser)
     } catch(e) {
         console.log(e)
+        res.status(500).json({ message: 'Something went wrong, please try again later.'})
     }
 }
 

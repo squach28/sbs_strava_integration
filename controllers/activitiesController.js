@@ -36,6 +36,7 @@ const getActivities = async (req, res) => {
         res.send(allActivities)
     } catch(e) {
         console.log(e)
+        res.status(500).json({ message: 'Something went wrong, please try again later.'})
     }
     
 }
@@ -44,6 +45,7 @@ const getActivities = async (req, res) => {
 const getActivitiesByDiscordId = async (req, res) => {
     const discordId = req.query.discordId
     const category = req.query.category
+    try {
     const accessToken = await getAccessToken(discordId)
     const before = req.query.before
     const after = req.query.after
@@ -68,6 +70,10 @@ const getActivitiesByDiscordId = async (req, res) => {
         activity.distance = convertToMiles(activity.distance)
     })
     res.send(data)
+    } catch(e) {
+        console.log(e)
+        res.status(500).json({ message: 'Something went wrong, please try again later.'})
+    }
 }
 
 module.exports = { getActivities, getActivitiesByDiscordId }
