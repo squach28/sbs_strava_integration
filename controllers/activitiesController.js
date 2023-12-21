@@ -21,9 +21,11 @@ const getActivities = async (req, res) => {
             }
             activities.forEach(activity => {
                 allActivities.push({
+                    discordId: user.discordId,
                     discordName: user.discordName,
                     avatarUrl: user.avatarUrl,
-                    ...activity
+                    ...activity,
+                    distance: convertToMiles(activity.distance)
                 })
             })
         }
@@ -49,34 +51,62 @@ const getActivitiesByDiscordId = async (req, res) => {
     const discordId = req.query.discordId
     const category = req.query.category
     try {
-    const accessToken = await getAccessToken(discordId)
-    const before = req.query.before
-    const after = req.query.after
-    const queryParams = (before && after) ? {
-        before: before,
-        after: after
-    } : null
-    const response = await fetch(`https://www.strava.com/api/v3/athlete/activities${queryParams ? '?' + querystring.stringify(queryParams) : ''}`, {
-        headers: {
-            Authorization: `Bearer ${accessToken}`
-        }
-    })
-    let data = await response.json()
-    if(category !== undefined) {
-        data = data.filter(sport => {
-            if(sport.sport_type.toLowerCase() === category.toLowerCase()) {
-                return sport
+        const accessToken = await getAccessToken(discordId)
+        const before = req.query.before
+        const after = req.query.after
+        const queryParams = (before && after) ? {
+            before: before,
+            after: after
+        } : null
+        const response = await fetch(`https://www.strava.com/api/v3/athlete/activities${queryParams ? '?' + querystring.stringify(queryParams) : ''}`, {
+            headers: {
+                Authorization: `Bearer ${accessToken}`
             }
         })
-    }
-    data.forEach(activity => {
-        activity.distance = convertToMiles(activity.distance)
-    })
-    res.send(data)
+        let data = await response.json()
+        if(category !== undefined) {
+            data = data.filter(sport => {
+                if(sport.sport_type.toLowerCase() === category.toLowerCase()) {
+                    return sport
+                }
+            })
+        }
+        data.forEach(activity => {
+            activity.distance = convertToMiles(activity.distance)
+        })
+        res.send(data)
     } catch(e) {
         console.log(e)
         res.status(500).json({ message: 'Something went wrong, please try again later.'})
     }
 }
 
-module.exports = { getActivities, getActivitiesByDiscordId }
+// get 5 most recent activities for a user by discord id
+const getRecentActivitiesByDiscordId = async (req, res) => {
+    const discordId = req.query.discordId
+    try {
+        const accessToken = await getAccessToken(discordId)
+        const before = req.query.before
+        const after = req.query.after
+        const queryParams = (before && after) ? {
+            before: before,
+            after: after
+        } : null
+        const response = await fetch(`https://www.strava.com/api/v3/athlete/activities${queryParams ? '?' + querystring.stringify(queryParams) : ''}`, {
+            headers: {
+                Authorization: `Bearer ${accessToken}`
+            }
+        })
+        let data = await response.json()
+        data = data.slice(0, 5)
+        data.forEach(activity => {
+            activity.distance = convertToMiles(activity.distance)
+        })
+        res.send(data)
+    } catch(e) {
+        console.log(e)
+        res.status(500).json({ message: 'Something went wrong, please try again later.'})
+    }
+}
+
+module.exports = { getActivities, getActivitiesByDiscordId, getRecentActivitiesByDiscordId }
