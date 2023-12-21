@@ -77,6 +77,7 @@ const getYearlyLeaderboard = async (year) => {
             year: year
         })
         const users = {} // map discord id to object containing numOfActivities and distance
+
         for(let leaderboard of yearLeaderboard) {
             for(let user of leaderboard.users) {
                 const numOfActivities = user.numOfActivities
@@ -86,10 +87,13 @@ const getYearlyLeaderboard = async (year) => {
                     users[discordId].numOfActivities += numOfActivities
                     users[discordId].distance += distance 
                 } else {
+                    const discordUser = await User.findOne({ discordId: user.discordId})
                     users[discordId] = {
                         discordId: discordId,
                         numOfActivities: numOfActivities,
-                        distance: distance
+                        distance: distance,
+                        avatarUrl: discordUser.avatarUrl,
+                        discordName: discordUser.discordName
                     }
                 }
             }
@@ -121,8 +125,46 @@ const getYearlyLeaderboard = async (year) => {
 
 }
 
-const getMonthlyLeaderboardByCategory = async (req, res) => {
+const getAllTimeLeaderboard = async (req, res) => {
+    const leaderboards = await Leaderboard.find({})
+    const users = {} // map discord id to object containing numOfActivities and distance
+    for(let leaderboard of leaderboards) {
+        for(let user of leaderboard.users) {
+            const numOfActivities = user.numOfActivities
+            const distance = user.distance
+            const discordId = user.discordId
+            if(user.discordId in users) {
+                users[discordId].numOfActivities += numOfActivities
+                users[discordId].distance += distance 
+            } else {
+                const discordUser = await User.findOne({ discordId: user.discordId})
+                users[discordId] = {
+                    discordId: discordId,
+                    numOfActivities: numOfActivities,
+                    distance: distance,
+                    avatarUrl: discordUser.avatarUrl,
+                    discordName: discordUser.discordName
+                }
+            }
+        }
+    }
+    const usersArr = []
     
-}
+    for(let [_ , value] of Object.entries(users)) {
+        usersArr.push(value)
+    }
+    usersArr.sort((a, b) => {
+        if(a.distance > b.distance) {
+            return -1
+        } else {
+            return 1
+        }
+    })
 
-module.exports = { getLeaderboard }
+    const leaderboard = {
+        year: 'allTime',
+        users: usersArr
+    }
+    return leaderboard
+}
+module.exports = { getLeaderboard, getAllTimeLeaderboard }
