@@ -126,45 +126,50 @@ const getYearlyLeaderboard = async (year) => {
 }
 
 const getAllTimeLeaderboard = async (req, res) => {
-    const leaderboards = await Leaderboard.find({})
-    const users = {} // map discord id to object containing numOfActivities and distance
-    for(let leaderboard of leaderboards) {
-        for(let user of leaderboard.users) {
-            const numOfActivities = user.numOfActivities
-            const distance = user.distance
-            const discordId = user.discordId
-            if(user.discordId in users) {
-                users[discordId].numOfActivities += numOfActivities
-                users[discordId].distance += distance 
-            } else {
-                const discordUser = await User.findOne({ discordId: user.discordId})
-                users[discordId] = {
-                    discordId: discordId,
-                    numOfActivities: numOfActivities,
-                    distance: distance,
-                    avatarUrl: discordUser.avatarUrl,
-                    discordName: discordUser.discordName
+    try {
+        const leaderboards = await Leaderboard.find({})
+        const users = {} // map discord id to object containing numOfActivities and distance
+        for(let leaderboard of leaderboards) {
+            for(let user of leaderboard.users) {
+                const numOfActivities = user.numOfActivities
+                const distance = user.distance
+                const discordId = user.discordId
+                if(user.discordId in users) {
+                    users[discordId].numOfActivities += numOfActivities
+                    users[discordId].distance += distance 
+                } else {
+                    const discordUser = await User.findOne({ discordId: user.discordId})
+                    users[discordId] = {
+                        discordId: discordId,
+                        numOfActivities: numOfActivities,
+                        distance: distance,
+                        avatarUrl: discordUser.avatarUrl,
+                        discordName: discordUser.discordName
+                    }
                 }
             }
         }
-    }
-    const usersArr = []
-    
-    for(let [_ , value] of Object.entries(users)) {
-        usersArr.push(value)
-    }
-    usersArr.sort((a, b) => {
-        if(a.distance > b.distance) {
-            return -1
-        } else {
-            return 1
+        const usersArr = []
+        
+        for(let [_ , value] of Object.entries(users)) {
+            usersArr.push(value)
         }
-    })
+        usersArr.sort((a, b) => {
+            if(a.distance > b.distance) {
+                return -1
+            } else {
+                return 1
+            }
+        })
 
-    const leaderboard = {
-        year: 'allTime',
-        users: usersArr
+        const leaderboard = {
+            year: 'allTime',
+            users: usersArr
+        }
+        res.send(leaderboard)
+    } catch(e) {
+        console.log(e)
+        res.status(500).json({ message: 'Something went wrong, please try again later.'})
     }
-    return leaderboard
 }
 module.exports = { getLeaderboard, getAllTimeLeaderboard }
