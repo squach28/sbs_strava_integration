@@ -43,6 +43,10 @@ const getAccessToken = async (discordId) => {
     }
 
     const currentUser = await User.findOne({ discordId: discordId })
+    
+    if(isTokenExpired(user.stravaTokenExpiresAt)) {
+        await generateNewAccessToken(user.stravaRefreshToken, user.stravaId)
+    }
 
     return currentUser.stravaAccessToken
 }
