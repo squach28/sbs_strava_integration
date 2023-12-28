@@ -64,7 +64,7 @@ const getMonthlyLeaderboard = async (month = (new Date().getMonth() + 1).toStrin
          return monthLeaderboard
     } catch(e) {
         return {
-            'message': 'invalid data'
+            'message': 'Invalid date'
         }
     }
 
@@ -116,7 +116,6 @@ const getYearlyLeaderboard = async (year) => {
             year: year,
             users: usersArr
         }
-    
         return leaderboard
     } catch(e) {
         console.log(e)
