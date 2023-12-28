@@ -8,6 +8,7 @@ const statsRoutes = require('./routes/statsRoutes.js')
 const activitesRoutes = require('./routes/activitiesRoutes.js')
 const cors = require('cors')
 const bodyParser = require('body-parser')
+const { updateLeaderboard } = require('./functions/leaderboardUpdate.js')
 
 const uri = `mongodb+srv://${process.env.MONGO_USERNAME}:${process.env.MONGO_PASSWORD}@cluster0.6dvxunc.mongodb.net/sbs-strava?retryWrites=true&w=majority` // uri to connect to mongo DB
 app.use(cors())
@@ -18,6 +19,8 @@ app.use('/activities', activitesRoutes)
 app.use('/auth', authRoutes)
 app.use('/leaderboard', leaderboardRoutes)
 app.use(express.static(__dirname + '/pages/exchangeTokenPage'))
+app.use(express.static(__dirname + '/pages/errorPage'))
+
 
 app.listen(process.env.PORT || 3001, async () => {
     console.log(`listening on ${process.env.PORT || 3001}`);

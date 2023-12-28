@@ -1,6 +1,7 @@
 const { Leaderboard, UserStats } = require('../models/Leaderboard')
 const User = require('../models/User')
 const querystring = require('querystring')
+const mongoose = require('mongoose')
 
 const getUserActivities = async (discordId, before, after) => {
     const queryParams = {

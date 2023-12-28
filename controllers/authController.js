@@ -72,27 +72,32 @@ const exchangeToken = async (req, res) => {
         }), { method: 'POST' })
             .then(result => result.json())
             .then(async data => {
-                const userInfo = {
-                    stravaId: data.athlete.id,
-                    stravaAccessToken: data.access_token,
-                    stravaRefreshToken: data.refresh_token,
-                    stravaTokenExpiresAt: data.expires_at,
+                if(data.message) {
+                    res.sendFile(path.join(__dirname, '../pages/errorPage/index.html'))
+                } else {
+                    const userInfo = {
+                        stravaId: data.athlete.id,
+                        stravaAccessToken: data.access_token,
+                        stravaRefreshToken: data.refresh_token,
+                        stravaTokenExpiresAt: data.expires_at,
+                    }
+                    await User.updateOne({
+                        sessionId: sessionId
+                    }, userInfo)
+                    const user = await User.findOneAndUpdate({
+                        stravaId: data.athlete.id
+                    }, {
+                        $unset: { sessionId: ''}
+                    }, {
+                        new: true
+                    })
+                    const discordId = user.discordId
+                    const accessToken = user.stravaAccessToken
+                    const stravaId = user.stravaId
+                    await addUserActivitesForCurrentMonth(discordId, stravaId, accessToken)
+                    res.sendFile(path.join(__dirname, '../pages/exchangeTokenPage/index.html'))
                 }
-                await User.updateOne({
-                    sessionId: sessionId
-                }, userInfo)
-                const user = await User.findOneAndUpdate({
-                    stravaId: data.athlete.id
-                }, {
-                    $unset: { sessionId: ''}
-                }, {
-                    new: true
-                })
-                const discordId = user.discordId
-                const accessToken = user.stravaAccessToken
-                const stravaId = user.stravaId
-                await addUserActivitesForCurrentMonth(discordId, stravaId, accessToken)
-                res.sendFile(path.join(__dirname, '../pages/exchangeTokenPage/index.html'))
+
             })
     } catch(e) {
         console.log(e)
