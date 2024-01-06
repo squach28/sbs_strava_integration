@@ -2,9 +2,11 @@ const fetch = require('node-fetch')
 const querystring = require('node:querystring')
 require('dotenv').config()
 const User = require('../models/User')
+const Activity = require('../models/Activity')
 const path = require('path')
 const { Leaderboard, UserStats } = require('../models/Leaderboard')
 const { convertToMiles } = require('../utils/unitsConverter')
+const { getAccessToken } = require("../utils/stravaAccessTokenUtil")
 
 // adds user's activities into the leaderboard for user who has just signed up
 const addUserActivitesForCurrentMonth = async (discordId, stravaId, accessToken) => {
@@ -57,6 +59,40 @@ const addUserActivitesForCurrentMonth = async (discordId, stravaId, accessToken)
 
 }
 
+const addUserActivities = async (discordId, stravaId) => {
+    const STRAVA_ATHLETE_ACTIVITES_API_URL = 'https://www.strava.com/api/v3/athlete/activities'
+    try {
+        const accessToken = await getAccessToken(discordId)
+        const response = await fetch(STRAVA_ATHLETE_ACTIVITES_API_URL, {
+            headers: {
+                Authorization: `Bearer ${accessToken}`
+            }
+        })
+        const activities = await response.json()
+        for(let activity of activities) {
+            const name = activity.name
+            const distance = activity.distance
+            const sportType = activity.sport_type
+            const startDate = activity.start_date
+            const elapsedTime = activity.elapsed_time
+            const timezone = activity.timezone
+            await Activity.create({
+                stravaId: stravaId,
+                discordId: discordId,
+                name: name,
+                distance: distance,
+                sportType: sportType,
+                startDate: startDate,
+                elapsedTime: elapsedTime,
+                timezone: timezone
+            })
+        }
+    } catch(e) {
+        console.log(e)
+        res.status(500).json({ 'message': 'Something went wrong, please try again later.'})
+    }
+}
+
 // gets a token using oauth2 from strava and stores it in the db
 // also takes away sessionId, marking that a user has completed registration
 const exchangeToken = async (req, res) => {
@@ -95,6 +131,7 @@ const exchangeToken = async (req, res) => {
                     const accessToken = user.stravaAccessToken
                     const stravaId = user.stravaId
                     await addUserActivitesForCurrentMonth(discordId, stravaId, accessToken)
+                    await addUserActivities(discordId, stravaId)
                     res.sendFile(path.join(__dirname, '../pages/exchangeTokenPage/index.html'))
                 }
 

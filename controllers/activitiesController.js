@@ -43,7 +43,6 @@ const getActivities = async (req, res) => {
         console.log(e)
         res.status(500).json({ message: 'Something went wrong, please try again later.'})
     }
-    
 }
 
 // get activities based on a discord id
@@ -108,5 +107,7 @@ const getRecentActivitiesByDiscordId = async (req, res) => {
         res.status(500).json({ message: 'Something went wrong, please try again later.'})
     }
 }
+
+
 
 module.exports = { getActivities, getActivitiesByDiscordId, getRecentActivitiesByDiscordId }
