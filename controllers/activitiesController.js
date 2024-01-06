@@ -2,43 +2,14 @@ const User = require('../models/User')
 const { getAccessToken } = require("../utils/stravaAccessTokenUtil")
 const querystring = require('querystring')
 const { convertToMiles } = require('../utils/unitsConverter')
+const Activity = require('../models/Activity')
 
-// get the activities of all users 
+// get the activities of all users sorted by start date descending
 const getActivities = async (req, res) => {
     try {
-        const users = await User.find({})
-        const allActivities = []
-        for(let user of users) {
-            const accessToken = await getAccessToken(user.discordId)
-            const response = await fetch(`https://www.strava.com/api/v3/athlete/activities`, {
-                headers: {
-                    Authorization: `Bearer ${accessToken}`
-                }
-            })
-            let activities = await response.json()
-            if(activities.message) {
-                activities = []
-            }
-            activities.forEach(activity => {
-                allActivities.push({
-                    discordId: user.discordId,
-                    discordName: user.discordName,
-                    avatarUrl: user.avatarUrl,
-                    ...activity,
-                    distance: convertToMiles(activity.distance)
-                })
-            })
-        }
-        allActivities.sort((a, b) => {
-            const aDate = new Date(a.start_date)
-            const bDate = new Date(b.start_date)
-            if(aDate > bDate) {
-                return -1
-            } else {
-                return 1
-            }
-        })
-        res.send(allActivities)
+        const activities = await Activity.find({})
+            .sort({ startDate: -1 })
+        res.send(activities)
     } catch(e) {
         console.log(e)
         res.status(500).json({ message: 'Something went wrong, please try again later.'})
@@ -50,30 +21,17 @@ const getActivitiesByDiscordId = async (req, res) => {
     const discordId = req.query.discordId
     const category = req.query.category
     try {
-        const accessToken = await getAccessToken(discordId)
-        const before = req.query.before
-        const after = req.query.after
-        const queryParams = (before && after) ? {
-            before: before,
-            after: after
-        } : null
-        const response = await fetch(`https://www.strava.com/api/v3/athlete/activities${queryParams ? '?' + querystring.stringify(queryParams) : ''}`, {
-            headers: {
-                Authorization: `Bearer ${accessToken}`
-            }
-        })
-        let data = await response.json()
-        if(category !== undefined) {
-            data = data.filter(sport => {
-                if(sport.sport_type.toLowerCase() === category.toLowerCase()) {
-                    return sport
-                }
-            })
+        const filter = {
+            discordId: discordId,
+            category: category
         }
-        data.forEach(activity => {
-            activity.distance = convertToMiles(activity.distance)
-        })
-        res.send(data)
+        if(filter.category === undefined) {
+            delete filter.category
+        } else {
+            filter.category = filter.category.toLowerCase()
+        }
+        const activities = await Activity.find(filter)
+        res.send(activities)
     } catch(e) {
         console.log(e)
         res.status(500).json({ message: 'Something went wrong, please try again later.'})
@@ -84,24 +42,12 @@ const getActivitiesByDiscordId = async (req, res) => {
 const getRecentActivitiesByDiscordId = async (req, res) => {
     const discordId = req.query.discordId
     try {
-        const accessToken = await getAccessToken(discordId)
-        const before = req.query.before
-        const after = req.query.after
-        const queryParams = (before && after) ? {
-            before: before,
-            after: after
-        } : null
-        const response = await fetch(`https://www.strava.com/api/v3/athlete/activities${queryParams ? '?' + querystring.stringify(queryParams) : ''}`, {
-            headers: {
-                Authorization: `Bearer ${accessToken}`
-            }
+        const recentActivities = await Activity.find({
+            discordId: discordId
         })
-        let data = await response.json()
-        data = data.slice(0, 5)
-        data.forEach(activity => {
-            activity.distance = convertToMiles(activity.distance)
-        })
-        res.send(data)
+            .sort({ startDate: -1 })
+            .limit(5)
+        res.send(recentActivities)
     } catch(e) {
         console.log(e)
         res.status(500).json({ message: 'Something went wrong, please try again later.'})

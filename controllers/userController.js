@@ -1,6 +1,4 @@
-const Activity  = require("../models/Activity")
 const User = require("../models/User")
-const { getAccessToken } = require("../utils/stravaAccessTokenUtil")
 
 // fetches a user from the DB by discord id
 const getUserByDiscordId = async (req, res) => {

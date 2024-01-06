@@ -72,7 +72,7 @@ const addUserActivities = async (discordId, stravaId) => {
         for(let activity of activities) {
             const name = activity.name
             const distance = activity.distance
-            const sportType = activity.sport_type
+            const category = activity.sport_type.toLowerCase()
             const startDate = activity.start_date
             const elapsedTime = activity.elapsed_time
             const timezone = activity.timezone
@@ -81,7 +81,7 @@ const addUserActivities = async (discordId, stravaId) => {
                 discordId: discordId,
                 name: name,
                 distance: distance,
-                sportType: sportType,
+                category: category,
                 startDate: startDate,
                 elapsedTime: elapsedTime,
                 timezone: timezone

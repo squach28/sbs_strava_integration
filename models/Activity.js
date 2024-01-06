@@ -16,7 +16,7 @@ const ActivitySchema = mongoose.Schema({
     distance: {
         type: Number
      },
-    sportType: {
+    category: {
         type: String
     },
     startDate: {
