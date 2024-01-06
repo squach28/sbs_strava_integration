@@ -8,7 +8,8 @@ const { Leaderboard, UserStats } = require('../models/Leaderboard')
 const { convertToMiles } = require('../utils/unitsConverter')
 const { getAccessToken } = require("../utils/stravaAccessTokenUtil")
 
-// adds user's activities into the leaderboard for user who has just signed up
+// TODO: change so that activites for the month are inserted into leaderboard
+// all time leaderboard will fetch from activity table
 const addUserActivitesForCurrentMonth = async (discordId, stravaId, accessToken) => {
     try {
         const currentDate = new Date()

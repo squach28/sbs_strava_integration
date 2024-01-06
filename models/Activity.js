@@ -1,6 +1,10 @@
 const mongoose = require('mongoose')
 
 const ActivitySchema = mongoose.Schema({
+    id: {
+        type: String,
+        required: true
+    },
     stravaId: {
         type: String,
         required: true
