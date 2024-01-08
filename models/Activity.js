@@ -13,6 +13,10 @@ const ActivitySchema = mongoose.Schema({
         type: String,
         required: true
     },
+    discordName: {
+        type: String,
+        required: true
+    },
     avatarUrl: {
         type: String,
         required: true

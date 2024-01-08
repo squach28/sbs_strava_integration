@@ -65,6 +65,7 @@ const addUserActivities = async (discordId, stravaId) => {
         const activities = await response.json()
         for(let activity of activities) {
             const id = activity.id
+            const discordName = user.discordName
             const avatarUrl = user.avatarUrl
             const name = activity.name
             const distance = activity.distance
@@ -76,6 +77,7 @@ const addUserActivities = async (discordId, stravaId) => {
                 id: id,
                 stravaId: stravaId,
                 discordId: discordId,
+                discordName: discordName,
                 avatarUrl: avatarUrl,
                 name: name,
                 distance: convertToMiles(distance),
