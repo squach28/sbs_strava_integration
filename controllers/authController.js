@@ -8,41 +8,30 @@ const { Leaderboard, UserStats } = require('../models/Leaderboard')
 const { convertToMiles } = require('../utils/unitsConverter')
 const { getAccessToken } = require("../utils/stravaAccessTokenUtil")
 
-// TODO: change so that activites for the month are inserted into leaderboard
-// all time leaderboard will fetch from activity table
-const addUserActivitesForCurrentMonth = async (discordId, stravaId, accessToken) => {
+// on registration, add the user's activities for the current month into the leaderboard
+const addUserActivitiesToLeaderboard = async (discordId, stravaId) => {
     try {
         const currentDate = new Date()
         const month = ((currentDate.getMonth() % 13) + 1).toString()
         const year = currentDate.getFullYear().toString()
-        const before = new Date(currentDate.getMonth() + 1 <= 11 ? currentDate.getFullYear() : currentDate.getFullYear() + 1,( currentDate.getMonth() + 1) % 11, 1).getTime() / 1000
-        const after = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1).getTime() / 1000
-        const queryParams = {
-            before: before,
-            after: after
-        }
-        const res = await fetch(`https://www.strava.com/api/v3/athlete/activities${queryParams ? '?' + querystring.stringify(queryParams) : ''}`, {
-            headers: {
-                Authorization: `Bearer ${accessToken}`
-            }
+        const before = new Date(currentDate.getMonth() + 1 <= 11 ? currentDate.getFullYear() : currentDate.getFullYear() + 1,( currentDate.getMonth() + 1) % 11, 1).toISOString()
+        const after = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1).toISOString()
+        const activities = await Activity.find({
+            discordId: discordId,
+            startDate: { $gt: after, $lt: before }
         })
-
-        const activities = await res.json()
-        const activityInfo = {
+        const result = {
             numOfActivities: 0,
             distance: 0,
             discordId: discordId,
             stravaId: stravaId
         }
-        const result = activities.reduce((acc, curr) => {
-            return {
-                distance: acc.distance + curr.distance,
-                numOfActivities: acc.numOfActivities + 1,
-                discordId: acc.discordId,
-                stravaId: acc.stravaId
-            }
-        }, activityInfo)
-        result.distance = convertToMiles(result.distance)
+        for(let activity of activities) {
+            const distance = activity.distance
+            result.distance += distance
+            result.numOfActivities += 1
+        }
+
         const userStats = new UserStats(result)
         const update = {
             $push: { users: userStats }
@@ -60,9 +49,13 @@ const addUserActivitesForCurrentMonth = async (discordId, stravaId, accessToken)
 
 }
 
+// add all user's activities into the activities table
 const addUserActivities = async (discordId, stravaId) => {
     const STRAVA_ATHLETE_ACTIVITES_API_URL = 'https://www.strava.com/api/v3/athlete/activities'
     try {
+        const user = await User.findOne({
+            discordId: discordId
+        })
         const accessToken = await getAccessToken(discordId)
         const response = await fetch(STRAVA_ATHLETE_ACTIVITES_API_URL, {
             headers: {
@@ -72,6 +65,7 @@ const addUserActivities = async (discordId, stravaId) => {
         const activities = await response.json()
         for(let activity of activities) {
             const id = activity.id
+            const avatarUrl = user.avatarUrl
             const name = activity.name
             const distance = activity.distance
             const category = activity.sport_type.toLowerCase()
@@ -82,6 +76,7 @@ const addUserActivities = async (discordId, stravaId) => {
                 id: id,
                 stravaId: stravaId,
                 discordId: discordId,
+                avatarUrl: avatarUrl,
                 name: name,
                 distance: convertToMiles(distance),
                 category: category,
@@ -133,8 +128,8 @@ const exchangeToken = async (req, res) => {
                     const discordId = user.discordId
                     const accessToken = user.stravaAccessToken
                     const stravaId = user.stravaId
-                    await addUserActivitesForCurrentMonth(discordId, stravaId, accessToken)
                     await addUserActivities(discordId, stravaId)
+                    await addUserActivitiesToLeaderboard(discordId, stravaId)
                     res.sendFile(path.join(__dirname, '../pages/exchangeTokenPage/index.html'))
                 }
 
