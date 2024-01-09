@@ -10,6 +10,5 @@ router.use('/', expiredTokenMiddleware)
 router.get('/', getActivitiesByDiscordId)
 router.get('/recent', getRecentActivitiesByDiscordId)
 router.get('/timeframe', getActivitiesByTimeframe)
-const date = new Date()
-date.getUTCDate()
+
 module.exports = router
